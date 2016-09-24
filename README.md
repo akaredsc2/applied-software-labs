@@ -1,0 +1,1 @@
+Implementing lab tasks for Applied Software course

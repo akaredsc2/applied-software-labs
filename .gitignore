@@ -16,3 +16,5 @@ hs_err_pid*
 .gitignore
 .idea/
 Applied Software.iml
+out
+target
