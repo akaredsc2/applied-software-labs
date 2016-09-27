@@ -1,5 +1,6 @@
 package ua.fpm.appsoft.linear_equations_system;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
 
 import static java.lang.Math.pow;
@@ -8,7 +9,6 @@ import static org.apache.commons.math3.linear.MatrixUtils.createRealMatrix;
 
 public class SquareRootSolver {
 
-    //TODO UI
     public static RealVector solve(RealMatrix matrix, RealVector vector) {
         checkMatrix(matrix);
         checkDimensionMatch(matrix, vector);
@@ -65,7 +65,7 @@ public class SquareRootSolver {
 
     private static void checkDimensionMatch(RealMatrix matrix, RealVector vector) {
         if (matrix.getRowDimension() != vector.getDimension())
-            throw new IllegalArgumentException("Matrix and vector dimension does not match");
+            throw new DimensionMismatchException(vector.getDimension(), matrix.getColumnDimension());
     }
 
     private static boolean isPositiveDefinite(RealMatrix matrix) {

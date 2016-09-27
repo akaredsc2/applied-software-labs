@@ -1,5 +1,6 @@
 package ua.fpm.appsoft.linear_equations_system;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class SquareRootSolverTest {
         SquareRootSolver.solve(singularMatrix, vector3);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = DimensionMismatchException.class)
     public void testNonMatchingDimensions() {
         SquareRootSolver.solve(matrix3, vector5);
     }
