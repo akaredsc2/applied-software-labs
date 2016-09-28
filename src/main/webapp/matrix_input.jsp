@@ -10,13 +10,13 @@
 <form method="post" action="linear_system">
     <c:forEach var="i" begin="1" end="${param.dimension}">
         <c:forEach var="j" begin="1" end="${param.dimension}">
-            <input name="mat_${i}${j}" type="number" step="any" required>
+            <input name="mat_${i}${j}" type="number" step="any" min="-2147483648" max="2147483647" required>
         </c:forEach>
         <br>
     </c:forEach>
     <br><br><br>
     <c:forEach var="k" begin="1" end="${param.dimension}">
-        <input name="vec_${k}" type="number" step="any" required>
+        <input name="vec_${k}" type="number" step="any" min="-2147483648" max="2147483647" required>
         <br>
     </c:forEach>
     <input type="hidden" name="dim" value="${param.dimension}">

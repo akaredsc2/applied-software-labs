@@ -39,7 +39,7 @@ public class LinearSystemServlet extends HttpServlet {
             RealVector result = SquareRootSolver.solve(matrix, vector);
             request.setAttribute("result", result.toString());
             getServletContext().getRequestDispatcher("/matrix_result.jsp").forward(request, response);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             request.setAttribute("trouble", e.getClass());
             getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
         }
