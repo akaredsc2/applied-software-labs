@@ -7,31 +7,51 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static org.apache.commons.math3.linear.MatrixUtils.createRealMatrix;
 
-public class SquareRootSolver {
+public class SquareRootSolver implements LinearSystemDecompositionSolver {
 
-    public static RealVector solve(RealMatrix matrix, RealVector vector) {
-        checkMatrix(matrix);
-        checkDimensionMatch(matrix, vector);
+    private RealMatrix initMatrix;
+    private RealVector rightSideVector;
+    private RealMatrix upperTriangleMatrix;
 
-        RealMatrix upperTriangleMatrix = createUpperTriangleMatrix(matrix);
-        RealMatrix bottomTriangleMatrix = upperTriangleMatrix.transpose();
-        RealVector bottomVector = runForward(bottomTriangleMatrix, vector);
+    public SquareRootSolver(RealMatrix initMatrix, RealVector rightSideVector) {
+        checkMatrix(initMatrix);
+        checkDimensionMatch(initMatrix, rightSideVector);
+        this.initMatrix = initMatrix;
+        this.rightSideVector = rightSideVector;
+        this.upperTriangleMatrix = createUpperTriangleMatrix();
+    }
+
+    @Override
+    public RealVector solve() {
+        RealVector bottomVector = runForward(getBottomTriangleMatrix(), rightSideVector);
         return reversalRun(upperTriangleMatrix, bottomVector);
     }
 
-    private static RealMatrix createUpperTriangleMatrix(RealMatrix fromMatrix) {
-        RealMatrix result = createRealMatrix(fromMatrix.getRowDimension(), fromMatrix.getRowDimension());
+    @Override
+    public RealMatrix getBottomTriangleMatrix() {
+        return upperTriangleMatrix.transpose();
+    }
+
+    @Override
+    public RealMatrix getUpperTriangleMatrix() {
+        return upperTriangleMatrix;
+    }
+
+    private RealMatrix createUpperTriangleMatrix() {
+        final int rowDimension = initMatrix.getRowDimension();
+        RealMatrix result = createRealMatrix(rowDimension, rowDimension);
         for (int i = 0; i < result.getRowDimension(); i++) {
             for (int j = 0; j < result.getRowDimension(); j++) {
                 double entryValue;
-                entryValue = (i == j) ? getDiagonal(fromMatrix, result, i) : getNonDiagonal(fromMatrix, result, i, j);
+                entryValue = (i == j) ? getDiagonal(initMatrix, result, i) : getNonDiagonal(initMatrix, result, i, j);
                 result.setEntry(i, j, entryValue);
             }
         }
         return result;
     }
 
-    private static RealVector runForward(RealMatrix matrix, RealVector vector) {
+
+    private RealVector runForward(RealMatrix matrix, RealVector vector) {
         RealVector resultVector = MatrixUtils.createRealVector(new double[matrix.getRowDimension()]);
         for (int i = 0; i < matrix.getColumnDimension(); i++) {
             double entryValue = vector.getEntry(i);
@@ -44,7 +64,7 @@ public class SquareRootSolver {
         return resultVector;
     }
 
-    private static RealVector reversalRun(RealMatrix matrix, RealVector vector) {
+    private RealVector reversalRun(RealMatrix matrix, RealVector vector) {
         RealVector resultVector = MatrixUtils.createRealVector(new double[matrix.getRowDimension()]);
         for (int i = matrix.getRowDimension() - 1; i >= 0; i--) {
             double entryValue = vector.getEntry(i);
@@ -57,18 +77,18 @@ public class SquareRootSolver {
         return resultVector;
     }
 
-    private static void checkMatrix(RealMatrix matrix) {
+    private void checkMatrix(RealMatrix matrix) {
         if (!MatrixUtils.isSymmetric(matrix, 0.0001)) throw new NonSymmetricMatrixException(0, 0, 0);
         if (new LUDecomposition(matrix).getDeterminant() == 0) throw new SingularMatrixException();
         if (!isPositiveDefinite(matrix)) throw new NonPositiveDefiniteMatrixException(0, 0, 0);
     }
 
-    private static void checkDimensionMatch(RealMatrix matrix, RealVector vector) {
+    private void checkDimensionMatch(RealMatrix matrix, RealVector vector) {
         if (matrix.getRowDimension() != vector.getDimension())
             throw new DimensionMismatchException(vector.getDimension(), matrix.getColumnDimension());
     }
 
-    private static boolean isPositiveDefinite(RealMatrix matrix) {
+    private boolean isPositiveDefinite(RealMatrix matrix) {
         for (int i = 0; i < matrix.getRowDimension(); i++) {
             RealMatrix subMatrix = matrix.getSubMatrix(0, i, 0, i);
             if (new LUDecomposition(subMatrix).getDeterminant() <= 0) return false;
@@ -76,7 +96,7 @@ public class SquareRootSolver {
         return true;
     }
 
-    private static double getDiagonal(RealMatrix matrix, RealMatrix resultMatrix, int index) {
+    private double getDiagonal(RealMatrix matrix, RealMatrix resultMatrix, int index) {
         double result = matrix.getEntry(index, index);
         for (int i = 0; i < index; i++) {
             result -= pow(resultMatrix.getEntry(i, index), 2);
@@ -84,7 +104,7 @@ public class SquareRootSolver {
         return sqrt(result);
     }
 
-    private static double getNonDiagonal(RealMatrix matrix, RealMatrix resultMatrix, int rowIndex, int columnIndex) {
+    private double getNonDiagonal(RealMatrix matrix, RealMatrix resultMatrix, int rowIndex, int columnIndex) {
         if (columnIndex < rowIndex) {
             return 0;
         } else {

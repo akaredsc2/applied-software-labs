@@ -36,7 +36,7 @@ public class LinearSystemServlet extends HttpServlet {
         RealMatrix matrix = MatrixUtils.createRealMatrix(parseMatrix(request));
         RealVector vector = MatrixUtils.createRealVector(parseVector(request));
         try {
-            RealVector result = SquareRootSolver.solve(matrix, vector);
+            RealVector result = new SquareRootSolver(matrix, vector).solve();
             request.setAttribute("result", result.toString());
             getServletContext().getRequestDispatcher("/matrix_result.jsp").forward(request, response);
         } catch (Exception e) {
@@ -67,6 +67,5 @@ public class LinearSystemServlet extends HttpServlet {
         }
         return result;
     }
-
 
 }
