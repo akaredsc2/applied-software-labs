@@ -3,14 +3,13 @@ package ua.fpm.appsoft.servlets;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
-import ua.fpm.appsoft.linear_equations_system.SquareRootSolver;
+import ua.fpm.appsoft.linearEquationsSystem.SquareRootSolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class LinearSystemServlet extends HttpServlet {
 

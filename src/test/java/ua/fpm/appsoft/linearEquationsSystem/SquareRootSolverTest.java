@@ -1,4 +1,4 @@
-package ua.fpm.appsoft.linear_equations_system;
+package ua.fpm.appsoft.linearEquationsSystem;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.*;

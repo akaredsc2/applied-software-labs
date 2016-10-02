@@ -1,4 +1,4 @@
-package ua.fpm.appsoft.linear_equations_system;
+package ua.fpm.appsoft.linearEquationsSystem;
 
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;

@@ -7,7 +7,8 @@
 <body>
 <h1>Something went wrong</h1>
 <c:if test="${!empty requestScope.trouble}">
-    Because of <br>
+    Because of
+    <br>
     <c:out value="${requestScope.trouble}"/>
 </c:if>
 <br>

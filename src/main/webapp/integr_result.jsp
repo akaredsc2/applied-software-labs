@@ -5,9 +5,9 @@
     <title>Result</title>
 </head>
 <body>
-    The answer is:<br>
-    ${requestScope.result}^T
-    <br>
-    <a href="<c:url value="/home.jsp"/>">Go home</a>
+The answer is:<br>
+${requestScope.result}
+<br>
+<a href="<c:url value="/home.jsp"/>">Go home</a>
 </body>
 </html>

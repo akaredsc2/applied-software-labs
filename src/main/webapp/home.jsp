@@ -5,6 +5,7 @@
     <title>Home</title>
 </head>
 <body>
-    <a href="<c:url value="/square_root_method.jsp"/>">Square Root Method for linear systems</a>
+    <a href="<c:url value="/square_root_method.jsp"/>">Square Root Method for linear systems</a><br>
+    <a href="<c:url value="/integr_input.jsp"/>">Numeric integration using right rectangle method</a>
 </body>
 </html>
