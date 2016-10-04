@@ -24,6 +24,16 @@
         <url-pattern>/num_integr</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>DifferentialEquationServlet</servlet-name>
+        <servlet-class>ua.fpm.appsoft.servlets.DifferentialEquationServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DifferentialEquationServlet</servlet-name>
+        <url-pattern>/diff_eq</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
