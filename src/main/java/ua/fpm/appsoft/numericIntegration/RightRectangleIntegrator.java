@@ -40,11 +40,15 @@ public class RightRectangleIntegrator implements NumericIntegrator {
     private double apply(double argument) throws ScriptException {
         engine.eval("var y = " + argument + ";");
         Object evalResult = engine.eval(function);
-        if (evalResult != null && evalResult instanceof Double) {
-            return (double) evalResult;
-        } else {
-            throw new ScriptException("Failed to evaluate function!");
+        if (evalResult != null) {
+            if (evalResult instanceof Double) {
+                return (double) evalResult;
+            }
+            if (evalResult instanceof Integer) {
+                return (int) evalResult;
+            }
         }
+        throw new ScriptException("Failed to evaluate function!");
     }
 
 }
