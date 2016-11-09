@@ -1,16 +1,14 @@
 package ua.fpm.appsoft.differentialEquations;
 
 import org.apache.commons.math3.geometry.euclidean.oned.Interval;
+import ua.fpm.appsoft.util.Evaluator;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.Arrays;
 
 public class RungeKuttaThirdOrderMethodSolver implements NumericDifferentialEquationSolver {
 
-    private final ScriptEngine engine;
-    private final String function;
+    private Evaluator evaluator;
     private final Interval interval;
     private final int intervalCount;
     private final double initArgument;
@@ -18,12 +16,11 @@ public class RungeKuttaThirdOrderMethodSolver implements NumericDifferentialEqua
 
     public RungeKuttaThirdOrderMethodSolver(String function, Interval interval, int intervalCount,
                                             double initArgument, double initFunction) {
-        this.function = function;
+        this.evaluator = new Evaluator(function);
         this.interval = interval;
         this.intervalCount = intervalCount;
         this.initArgument = initArgument;
         this.initFunction = initFunction;
-        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
     }
 
     @Override
@@ -39,9 +36,9 @@ public class RungeKuttaThirdOrderMethodSolver implements NumericDifferentialEqua
                 e.printStackTrace();
             }
 
-            double kZero = step * eval(currentPair.arg, currentPair.func);
-            double kOne = step * eval(currentPair.arg + step / 2, currentPair.func + kZero / 2);
-            double kTwo = step * eval(currentPair.arg + step, currentPair.func + 2 * kOne - kZero);
+            double kZero = step * evaluator.eval(currentPair.arg, currentPair.func);
+            double kOne = step * evaluator.eval(currentPair.arg + step / 2, currentPair.func + kZero / 2);
+            double kTwo = step * evaluator.eval(currentPair.arg + step, currentPair.func + 2 * kOne - kZero);
 
             currentPair.arg += step;
             currentPair.func += (kZero + 4 * kOne + kTwo) / 6;
@@ -53,16 +50,6 @@ public class RungeKuttaThirdOrderMethodSolver implements NumericDifferentialEqua
         }
 
         return result;
-    }
-
-    private double eval(double x, double y) throws ScriptException {
-        engine.eval("var x = " + x + ";");
-        engine.eval("var y = " + y + ";");
-        Object evalResult = engine.eval(function);
-        if (evalResult != null && evalResult instanceof Number) {
-            return ((Number) evalResult).doubleValue();
-        }
-        throw new ScriptException("Failed to evaluate function!");
     }
 
     private static class Pair implements Cloneable {
