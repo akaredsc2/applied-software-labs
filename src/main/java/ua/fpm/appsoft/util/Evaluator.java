@@ -1,5 +1,7 @@
 package ua.fpm.appsoft.util;
 
+import org.apache.commons.math3.linear.RealVector;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -27,6 +29,18 @@ public class Evaluator {
     public double eval(double x, double y) throws ScriptException {
         engine.eval("var x = " + x + ";");
         engine.eval("var y = " + y + ";");
+        Object evalResult = engine.eval(function);
+        if (evalResult != null && evalResult instanceof Number) {
+            return ((Number) evalResult).doubleValue();
+        }
+        throw new ScriptException("Failed to evaluate function!");
+    }
+
+    public double eval(RealVector vector) throws ScriptException {
+        for (int i = 0; i < vector.getDimension(); i++) {
+            int index = i + 1;
+            engine.eval("var x" + index + " = " + vector.getEntry(i) + ";");
+        }
         Object evalResult = engine.eval(function);
         if (evalResult != null && evalResult instanceof Number) {
             return ((Number) evalResult).doubleValue();
