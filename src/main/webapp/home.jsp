@@ -8,5 +8,6 @@
     <a href="<c:url value="/square_root_method.jsp"/>">Square Root Method for linear systems</a><br>
     <a href="<c:url value="/integr_input.jsp"/>">Numeric integration using right rectangle method</a><br>
     <a href="<c:url value="/diff_eq_input.jsp"/>">Runge-Kutta Third Rank Method for differential equations</a><br>
+    <a href="<c:url value="/uncond_opt_dim_input.jsp"/>">Hooke-Jeeves method for unconditional optimization</a><br>
 </body>
 </html>

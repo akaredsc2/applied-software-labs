@@ -5,10 +5,11 @@
     <title>Dimension Input</title>
 </head>
 <body>
-<form method="post" action="matrix_input.jsp">
+<form method="post" action="uncond_opt_input.jsp">
     <input type="number" name="dimension" step="1" min="1" max="10" required>
     <input type="submit" value="done"/>
 </form>
 <a href="<c:url value="/home.jsp"/>">Go home</a>
 </body>
 </html>
+

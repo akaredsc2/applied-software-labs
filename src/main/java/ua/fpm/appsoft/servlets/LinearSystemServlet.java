@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ua.fpm.appsoft.util.Parser.parseMatrix;
+import static ua.fpm.appsoft.util.Parser.parseVector;
+
 public class LinearSystemServlet extends HttpServlet {
 
     @Override
@@ -23,7 +26,7 @@ public class LinearSystemServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         try {
             process(req, resp);
         } catch (ServletException | IOException e) {
@@ -32,8 +35,8 @@ public class LinearSystemServlet extends HttpServlet {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RealMatrix matrix = MatrixUtils.createRealMatrix(parseMatrix(request));
-        RealVector vector = MatrixUtils.createRealVector(parseVector(request));
+        RealMatrix matrix = MatrixUtils.createRealMatrix(parseMatrix(request, "dim", "mat_"));
+        RealVector vector = MatrixUtils.createRealVector(parseVector(request, "dim", "vec_"));
         try {
             RealVector result = new SquareRootSolver(matrix, vector).solve();
             request.setAttribute("result", result.toString());
@@ -42,29 +45,6 @@ public class LinearSystemServlet extends HttpServlet {
             request.setAttribute("trouble", e.getClass());
             getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
         }
-    }
-
-    private double[][] parseMatrix(HttpServletRequest request) {
-        int dimension = Integer.parseInt(request.getParameter("dim"));
-        double[][] result = new double[dimension][dimension];
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                int row = i + 1;
-                int column = j + 1;
-                result[i][j] = Double.parseDouble(request.getParameter("mat_" + row + column));
-            }
-        }
-        return result;
-    }
-
-    private double[] parseVector(HttpServletRequest request) {
-        int dimension = Integer.parseInt(request.getParameter("dim"));
-        double[] result = new double[dimension];
-        for (int j = 0; j < dimension; j++) {
-            int column = j + 1;
-            result[j] = Double.parseDouble(request.getParameter("vec_" + column));
-        }
-        return result;
     }
 
 }

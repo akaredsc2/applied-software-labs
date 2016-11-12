@@ -11,15 +11,15 @@ public class HookeJeevesOptimizer implements UnconditionalOptimizer {
 
     private final Evaluator evaluator;
     private final RealVector initPoint;
-    private final Double initIncrement;
-    private final Double precision;
-    private final Double acceleration;
+    private final double initIncrement;
+    private final double precision;
+    private final double acceleration;
 
     private RealVector optimalPoint;
 
     public HookeJeevesOptimizer(String function,
-                                RealVector initPoint, Double initIncrement,
-                                Double precision, Double acceleration) {
+                                RealVector initPoint, double initIncrement,
+                                double precision, double acceleration) {
         this.evaluator = new Evaluator(function);
         this.initPoint = initPoint;
         this.initIncrement = initIncrement;

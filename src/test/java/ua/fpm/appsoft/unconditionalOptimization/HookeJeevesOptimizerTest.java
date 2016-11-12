@@ -6,7 +6,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import javax.script.ScriptException;
+
+import static org.junit.Assert.assertEquals;
 
 public class HookeJeevesOptimizerTest {
 
@@ -19,7 +21,7 @@ public class HookeJeevesOptimizerTest {
     public void setUp() {
         this.precision = 0.001;
         this.initIncrement = 1.0;
-
+        this.initPoint = MatrixUtils.createRealVector(new double[]{-2, 3, -4, 5});
     }
 
     @Test
@@ -35,8 +37,7 @@ public class HookeJeevesOptimizerTest {
     }
 
     @Test
-    public void optimizeTargetFunction() throws Exception {
-        this.initPoint = MatrixUtils.createRealVector(new double[]{-2, 3, -4, 5});
+    public void optimize4DFunction() throws Exception {
         this.optimizer = new HookeJeevesOptimizer("Math.pow(1 - x1, 2) + Math.pow(x1 - x2, 2) " +
                 "+ Math.pow(x2 - x3, 2) + Math.pow(x3 - x4, 2)",
                 initPoint,
@@ -46,4 +47,22 @@ public class HookeJeevesOptimizerTest {
         );
         assertEquals(0, optimizer.optimize(), precision);
     }
+
+    @Test(expected = ScriptException.class)
+    public void wrongFunctionExpression() throws Exception {
+        new HookeJeevesOptimizer("1488xy", initPoint, initIncrement, precision, 1.0).optimize();
+    }
+
+    @Test
+    public void divideByZero() throws Exception {
+        Assert.assertTrue(Double.isInfinite(
+                new HookeJeevesOptimizer("1 / 0", initPoint, initIncrement, precision, 1.0).optimize()));
+    }
+
+    @Test
+    public void complexResult() throws Exception {
+        Assert.assertTrue(Double.isNaN(
+                new HookeJeevesOptimizer("Math.sqrt(-1)", initPoint, initIncrement, precision, 1.0).optimize()));
+    }
+
 }

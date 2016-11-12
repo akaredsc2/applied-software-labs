@@ -34,6 +34,16 @@
         <url-pattern>/diff_eq</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>UnconditionalOptimizationServlet</servlet-name>
+        <servlet-class>ua.fpm.appsoft.servlets.UnconditionalOptimizationServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UnconditionalOptimizationServlet</servlet-name>
+        <url-pattern>/uncond_opt</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>

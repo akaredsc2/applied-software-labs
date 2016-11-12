@@ -2,13 +2,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Dimension Input</title>
+    <title>Result</title>
 </head>
 <body>
-<form method="post" action="matrix_input.jsp">
-    <input type="number" name="dimension" step="1" min="1" max="10" required>
-    <input type="submit" value="done"/>
-</form>
+
+The optimal point is:
+<br>
+${requestScope.resultPoint}^T
+<br>
+
+Corresponding function value is:
+<br>
+${requestScope.resultFunctionValue}
+<br>
+
 <a href="<c:url value="/home.jsp"/>">Go home</a>
 </body>
 </html>
