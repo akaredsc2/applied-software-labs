@@ -9,5 +9,6 @@
     <a href="<c:url value="/integr_input.jsp"/>">Numeric integration using right rectangle method</a><br>
     <a href="<c:url value="/diff_eq_input.jsp"/>">Runge-Kutta Third Rank Method for differential equations</a><br>
     <a href="<c:url value="/uncond_opt_dim_input.jsp"/>">Hooke-Jeeves method for unconditional optimization</a><br>
+    <a href="<c:url value="/linear_programming_dim_input.jsp"/>">Simplex method for resource use problem</a><br>
 </body>
 </html>

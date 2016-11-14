@@ -44,6 +44,16 @@
         <url-pattern>/uncond_opt</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ResourceUseServlet</servlet-name>
+        <servlet-class>ua.fpm.appsoft.servlets.ResourceUseServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ResourceUseServlet</servlet-name>
+        <url-pattern>/res_use</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>
