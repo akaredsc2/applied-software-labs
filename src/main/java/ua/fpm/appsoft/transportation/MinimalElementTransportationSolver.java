@@ -1,30 +1,53 @@
 package ua.fpm.appsoft.transportation;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import static java.util.Arrays.stream;
 
 public class MinimalElementTransportationSolver implements TransportationProblemSolver {
 
+    public static final double PERTURBATION = 0.00001;
     private double[][] costsPerUnit;
     private double[] supplies;
     private double[] demands;
 
     public MinimalElementTransportationSolver(double[][] costsPerUnit, double[] supplies, double[] demands) {
-        this.supplies = supplies;
-        this.demands = demands;
-
         double totalSupplies = stream(supplies).sum();
         double totalDemands = stream(demands).sum();
+
         if (totalSupplies == totalDemands) {
+            this.supplies = supplies;
+            this.demands = demands;
             this.costsPerUnit = costsPerUnit;
         } else if (totalSupplies > totalDemands) {
-            //todo handle
-        } else {
-            //todo handle
-        }
+            this.supplies = supplies;
 
+            double[] newDemands = Arrays.copyOf(demands, demands.length + 1);
+            newDemands[newDemands.length - 1] = totalSupplies - totalDemands;
+            this.demands = newDemands;
+            System.out.println(Arrays.toString(newDemands));
+
+            double[][] newCostsPerUnit = new double[supplies.length][];
+            for (int i = 0; i < newCostsPerUnit.length; i++) {
+                newCostsPerUnit[i] = Arrays.copyOf(costsPerUnit[i], newDemands.length);
+                newCostsPerUnit[i][newCostsPerUnit[i].length - 1] = 0;
+            }
+            this.costsPerUnit = newCostsPerUnit;
+            System.out.println(Arrays.deepToString(newCostsPerUnit));
+        } else {
+            double[] newSupplies = Arrays.copyOf(supplies, supplies.length + 1);
+            newSupplies[newSupplies.length - 1] = totalDemands - totalSupplies;
+            this.supplies = newSupplies;
+
+            this.demands = demands;
+
+            double[][] newCostsPerUnit = Arrays.copyOf(costsPerUnit, costsPerUnit.length + 1);
+            newCostsPerUnit[newCostsPerUnit.length - 1] = new double[demands.length];
+            this.costsPerUnit = newCostsPerUnit;
+        }
     }
 
     @Override
@@ -51,7 +74,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                 }
             }
 
-            //todo refactor
             if (innerDemands[jMin] < innerSupplies[iMin]) {
                 feasiblePlan[iMin][jMin] = innerDemands[jMin];
                 innerSupplies[iMin] -= innerDemands[jMin];
@@ -71,7 +93,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                     filledElements[iMin][j] = true;
                 }
             }
-
+            System.out.println(1);
         } while (filledElementsCount < supplies.length * demands.length);
 
         return feasiblePlan;
@@ -108,7 +130,9 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                         }
                     }
                 }
+                System.out.println(Arrays.deepToString(solution));
             }
+            System.out.println(2);
         } while (Arrays.stream(isFilledSupplierPotentials).filter(x -> !x).count() > 0 ||
                 Arrays.stream(isFilledDemandsPotentials).filter(x -> !x).count() > 0);
 
@@ -125,13 +149,15 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         for (int i = 0; i < amount; i++) {
             int supplyToChange;
             int demandToChange;
+            Random random = new Random();
             do {
-                supplyToChange = (int) (Math.random() % demands.length);
-                demandToChange = (int) (Math.random() % demands.length);
+                supplyToChange = Math.abs(random.nextInt()) % supplies.length;
+                demandToChange = Math.abs(random.nextInt()) % demands.length;
+                System.out.println(3);
             } while (solution[supplyToChange][demandToChange] != 0);
-            demands[demandToChange] += 0.001;
-            supplies[supplyToChange] += 0.001;
-            solution[supplyToChange][demandToChange] += 0.001;
+            demands[demandToChange] += PERTURBATION;
+            supplies[supplyToChange] += PERTURBATION;
+            solution[supplyToChange][demandToChange] += PERTURBATION;
         }
     }
 
@@ -141,6 +167,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         double[][] potentials = calculatePotentials(solution);
 
         while (!isOptimal(potentials)) {
+            System.out.println(4);
             boolean[][] isMarked = new boolean[supplies.length][demands.length];
 
             ArrayDeque<Point> cycle = getCycle(solution, isMarked, potentials);
@@ -156,9 +183,9 @@ public class MinimalElementTransportationSolver implements TransportationProblem
 
     private int solutionDegeneracy(double[][] solution) {
         int nonZerosCount = 0;
-        for (int i = 0; i < solution.length; i++) {
-            for (int j = 0; j < solution[i].length; j++) {
-                if (solution[i][j] > 0) {
+        for (double[] aSolution : solution) {
+            for (double anASolution : aSolution) {
+                if (anASolution > 0) {
                     nonZerosCount += 1;
                 }
             }
@@ -229,6 +256,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                 }
                 isNextIterationVertical = true;
             }
+            System.out.println(5);
         } while (!cycle.getLast().equals(cycle.getFirst()));
         return cycle;
     }
