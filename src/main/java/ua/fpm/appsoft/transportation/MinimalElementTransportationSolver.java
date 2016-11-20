@@ -28,7 +28,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
             double[] newDemands = Arrays.copyOf(demands, demands.length + 1);
             newDemands[newDemands.length - 1] = totalSupplies - totalDemands;
             this.demands = newDemands;
-            System.out.println(Arrays.toString(newDemands));
 
             double[][] newCostsPerUnit = new double[supplies.length][];
             for (int i = 0; i < newCostsPerUnit.length; i++) {
@@ -36,7 +35,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                 newCostsPerUnit[i][newCostsPerUnit[i].length - 1] = 0;
             }
             this.costsPerUnit = newCostsPerUnit;
-            System.out.println(Arrays.deepToString(newCostsPerUnit));
         } else {
             double[] newSupplies = Arrays.copyOf(supplies, supplies.length + 1);
             newSupplies[newSupplies.length - 1] = totalDemands - totalSupplies;
@@ -93,7 +91,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                     filledElements[iMin][j] = true;
                 }
             }
-            System.out.println(1);
         } while (filledElementsCount < supplies.length * demands.length);
 
         return feasiblePlan;
@@ -130,9 +127,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                         }
                     }
                 }
-                System.out.println(Arrays.deepToString(solution));
             }
-            System.out.println(2);
         } while (Arrays.stream(isFilledSupplierPotentials).filter(x -> !x).count() > 0 ||
                 Arrays.stream(isFilledDemandsPotentials).filter(x -> !x).count() > 0);
 
@@ -153,7 +148,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
             do {
                 supplyToChange = Math.abs(random.nextInt()) % supplies.length;
                 demandToChange = Math.abs(random.nextInt()) % demands.length;
-                System.out.println(3);
             } while (solution[supplyToChange][demandToChange] != 0);
             demands[demandToChange] += PERTURBATION;
             supplies[supplyToChange] += PERTURBATION;
@@ -167,7 +161,6 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         double[][] potentials = calculatePotentials(solution);
 
         while (!isOptimal(potentials)) {
-            System.out.println(4);
             boolean[][] isMarked = new boolean[supplies.length][demands.length];
 
             ArrayDeque<Point> cycle = getCycle(solution, isMarked, potentials);
@@ -256,8 +249,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
                 }
                 isNextIterationVertical = true;
             }
-            System.out.println(5);
-        } while (!cycle.getLast().equals(cycle.getFirst()));
+        } while (!cycle.getLast().equals(cycle.getFirst()) || cycle.size() == 1);
         return cycle;
     }
 
@@ -335,8 +327,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
 
             Point point = (Point) o;
 
-            if (i != point.i) return false;
-            return j == point.j;
+            return i == point.i && j == point.j;
 
         }
 
