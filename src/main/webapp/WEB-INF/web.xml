@@ -4,56 +4,6 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <servlet>
-        <servlet-name>LinearSystemServlet</servlet-name>
-        <servlet-class>ua.fpm.appsoft.servlets.LinearSystemServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>LinearSystemServlet</servlet-name>
-        <url-pattern>/linear_system</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>RectangleIntegratorServlet</servlet-name>
-        <servlet-class>ua.fpm.appsoft.servlets.RectangleIntegratorServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>RectangleIntegratorServlet</servlet-name>
-        <url-pattern>/num_integr</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DifferentialEquationServlet</servlet-name>
-        <servlet-class>ua.fpm.appsoft.servlets.DifferentialEquationServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>DifferentialEquationServlet</servlet-name>
-        <url-pattern>/diff_eq</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>UnconditionalOptimizationServlet</servlet-name>
-        <servlet-class>ua.fpm.appsoft.servlets.UnconditionalOptimizationServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>UnconditionalOptimizationServlet</servlet-name>
-        <url-pattern>/uncond_opt</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ResourceUseServlet</servlet-name>
-        <servlet-class>ua.fpm.appsoft.servlets.ResourceUseServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>ResourceUseServlet</servlet-name>
-        <url-pattern>/res_use</url-pattern>
-    </servlet-mapping>
-
     <welcome-file-list>
         <welcome-file>home.jsp</welcome-file>
     </welcome-file-list>

@@ -5,11 +5,13 @@ import ua.fpm.appsoft.numericIntegration.NumericIntegrator;
 import ua.fpm.appsoft.numericIntegration.RightRectangleIntegrator;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@WebServlet(urlPatterns = {"/num_integr"})
 public class RectangleIntegratorServlet extends HttpServlet {
 
     @Override
