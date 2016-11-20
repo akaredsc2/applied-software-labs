@@ -1,5 +1,6 @@
 package ua.fpm.appsoft.transportation;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 
 import static java.util.Arrays.stream;
@@ -113,17 +114,131 @@ public class MinimalElementTransportationSolver implements TransportationProblem
             }
         }
 
-        System.out.println(Arrays.deepToString(potentials));
-
         return potentials;
     }
 
     @Override
     public double[][] getOptimalSolution() {
         double[][] solution = this.getInitialFeasibleSolution();
-        double[][] potential = calculatePotentials(solution);
+        double[][] potentials = calculatePotentials(solution);
 
-        return new double[0][];
+        while (!isOptimal(potentials)) {
+            boolean[][] isMarked = new boolean[supplies.length][demands.length];
+
+            ArrayDeque<Point> cycle = getCycle(solution, isMarked, potentials);
+
+            double amountToTransfer = getCalculateAmountToTransfer(cycle, solution);
+
+            doTransfer(amountToTransfer, cycle, solution);
+
+            potentials = calculatePotentials(solution);
+        }
+        return solution;
+    }
+
+    private boolean isOptimal(double[][] potentials) {
+        for (double[] potential : potentials) {
+            for (double aPotential : potential) {
+                if (aPotential < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void doTransfer(double amountToTransfer, ArrayDeque<Point> cycle, double[][] solution) {
+        ArrayDeque<Point> cycleClone = cycle.clone();
+        for (int i = 0; i < cycle.size(); i += 2) {
+            solution[cycleClone.peekFirst().i][cycleClone.peekFirst().j] += amountToTransfer;
+            cycleClone.pollFirst();
+            solution[cycleClone.peekFirst().i][cycleClone.peekFirst().j] -= amountToTransfer;
+            cycleClone.pollFirst();
+        }
+    }
+
+    private double getCalculateAmountToTransfer(ArrayDeque<Point> cycle, double[][] solution) {
+        double min = Double.POSITIVE_INFINITY;
+        ArrayDeque<Point> cycleClone = cycle.clone();
+        for (int i = 0; i < cycle.size(); i += 2) {
+            cycleClone.pollFirst();
+            if (solution[cycleClone.peekFirst().i][cycleClone.peekFirst().j] < min) {
+                min = solution[cycleClone.peekFirst().i][cycleClone.peekFirst().j];
+            }
+            cycleClone.pollFirst();
+        }
+        return min;
+    }
+
+    private ArrayDeque<Point> getCycle(double[][] solution, boolean[][] isMarked, double[][] potentials) {
+        ArrayDeque<Point> cycle = new ArrayDeque<>();
+        Point cycleHead = findCycleHead(potentials);
+        cycle.add(cycleHead);
+
+        boolean isNextIterationVertical = true;
+        do {
+            if (isNextIterationVertical) {
+                Point searchVerticalResult = searchVertical(cycle.getLast(), solution, isMarked);
+                if (searchVerticalResult != null) {
+                    cycle.add(searchVerticalResult);
+                    if (searchVerticalResult.i == cycle.getFirst().i) {
+                        break;
+                    }
+                } else {
+                    Point lastPoint = cycle.pollLast();
+                    isMarked[lastPoint.i][lastPoint.j] = true;
+                }
+                isNextIterationVertical = false;
+            } else {
+                Point searchHorizontalResult = searchHorizontal(cycle.getLast(), solution, isMarked);
+                if (searchHorizontalResult != null) {
+                    cycle.add(searchHorizontalResult);
+                } else {
+                    Point lastPoint = cycle.pollLast();
+                    isMarked[lastPoint.i][lastPoint.j] = true;
+                }
+                isNextIterationVertical = true;
+            }
+        } while (!cycle.getLast().equals(cycle.getFirst()));
+        return cycle;
+    }
+
+    private Point searchVertical(Point fromPoint, double[][] solution, boolean[][] isMarked) {
+        for (int i = 0; i < solution.length; i++) {
+            if (solution[i][fromPoint.j] == 0) {
+                isMarked[i][fromPoint.j] = true;
+            }
+            if (solution[i][fromPoint.j] != 0 && !isMarked[i][fromPoint.j] && i != fromPoint.i) {
+                return new Point(i, fromPoint.j);
+            }
+        }
+        return null;
+    }
+
+    private Point searchHorizontal(Point fromPoint, double[][] solution, boolean[][] isMarked) {
+        for (int j = 0; j < solution[fromPoint.i].length; j++) {
+            if (solution[fromPoint.i][j] == 0) {
+                isMarked[fromPoint.i][j] = true;
+            }
+            if (solution[fromPoint.i][j] != 0 && !isMarked[fromPoint.i][j] && j != fromPoint.j) {
+                return new Point(fromPoint.i, j);
+            }
+        }
+        return null;
+    }
+
+    private Point findCycleHead(double[][] potentials) {
+        double min = Double.POSITIVE_INFINITY;
+        Point minPoint = new Point(0, 0);
+        for (int i = 0; i < potentials.length; i++) {
+            for (int j = 0; j < potentials[i].length; j++) {
+                if (potentials[i][j] < 0 && potentials[i][j] < min) {
+                    min = potentials[i][j];
+                    minPoint = new Point(i, j);
+                }
+            }
+        }
+        return minPoint;
     }
 
     @Override
@@ -135,6 +250,44 @@ public class MinimalElementTransportationSolver implements TransportationProblem
             }
         }
         return result;
+    }
+
+    private static class Point {
+
+        int i;
+        int j;
+
+        public Point(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        @Override
+        public String toString() {
+            return "Point{" +
+                    "i=" + i +
+                    ", j=" + j +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Point point = (Point) o;
+
+            if (i != point.i) return false;
+            return j == point.j;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = i;
+            result = 31 * result + j;
+            return result;
+        }
     }
 
 }
