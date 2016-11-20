@@ -79,6 +79,10 @@ public class MinimalElementTransportationSolver implements TransportationProblem
 
     @Override
     public double[][] calculatePotentials(double[][] solution) {
+        int degeneracy = solutionDegeneracy(solution);
+        if (degeneracy > 0) {
+            addFictionalTransportation(solution, degeneracy);
+        }
         double[][] potentials = new double[supplies.length][demands.length];
         double[] supplierPotentials = new double[supplies.length];
         Boolean[] isFilledSupplierPotentials = new Boolean[supplies.length];
@@ -117,6 +121,20 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         return potentials;
     }
 
+    private void addFictionalTransportation(double[][] solution, int amount) {
+        for (int i = 0; i < amount; i++) {
+            int supplyToChange;
+            int demandToChange;
+            do {
+                supplyToChange = (int) (Math.random() % demands.length);
+                demandToChange = (int) (Math.random() % demands.length);
+            } while (solution[supplyToChange][demandToChange] != 0);
+            demands[demandToChange] += 0.001;
+            supplies[supplyToChange] += 0.001;
+            solution[supplyToChange][demandToChange] += 0.001;
+        }
+    }
+
     @Override
     public double[][] getOptimalSolution() {
         double[][] solution = this.getInitialFeasibleSolution();
@@ -134,6 +152,18 @@ public class MinimalElementTransportationSolver implements TransportationProblem
             potentials = calculatePotentials(solution);
         }
         return solution;
+    }
+
+    private int solutionDegeneracy(double[][] solution) {
+        int nonZerosCount = 0;
+        for (int i = 0; i < solution.length; i++) {
+            for (int j = 0; j < solution[i].length; j++) {
+                if (solution[i][j] > 0) {
+                    nonZerosCount += 1;
+                }
+            }
+        }
+        return (demands.length + supplies.length - 1) - nonZerosCount;
     }
 
     private boolean isOptimal(double[][] potentials) {

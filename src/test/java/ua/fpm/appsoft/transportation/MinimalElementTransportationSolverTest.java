@@ -36,15 +36,16 @@ public class MinimalElementTransportationSolverTest {
     @Test
     public void getOptimalSolution() throws Exception {
         assertEquals(1560, solver.getTotalCost(solver.getOptimalSolution()), 0.001);
+
         double[][] costs = new double[][]{
-                {4, 8, 10, 5},
-                {4, 6, 2, 3},
-                {4, 4, 6, 5}
+                {7, 4, 8, 3, 6},
+                {5, 5, 4, 3, 8},
+                {5, 6, 5, 8, 6}
         };
-        double[] supplies = new double[]{160, 30, 90};
-        double[] demands = new double[]{100, 40, 80, 60};
+        double[] supplies = new double[]{70, 80, 90};
+        double[] demands = new double[]{30, 30, 60, 90, 30};
         solver = new MinimalElementTransportationSolver(costs, supplies, demands);
-        System.out.println(Arrays.deepToString(solver.getInitialFeasibleSolution()));
+        System.out.println(Arrays.deepToString(solver.getOptimalSolution()));
     }
 
     @Test
