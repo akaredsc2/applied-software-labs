@@ -1,19 +1,38 @@
 package ua.fpm.appsoft.transportation;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 import static java.util.Arrays.stream;
 
+/**
+ * This class implements minimal element method for creating initial feasible solution.
+ * In case of degenerate solution a random perturbation is applied to remove degeneracy.
+ * Method of potentials is used to optimize(minimize, in case of this class) total transportation cost.
+ *
+ * @see ua.fpm.appsoft.transportation.TransportationProblemSolver
+ * @
+ */
 public class MinimalElementTransportationSolver implements TransportationProblemSolver {
 
-    public static final double PERTURBATION = 0.00001;
+    private static final double PERTURBATION = 0.00001;
     private double[][] costsPerUnit;
     private double[] supplies;
     private double[] demands;
 
+    /**
+     * Construct new instance of transportation problem solver with given costs of moving one unit of some supply,
+     * amounts of supplies and amounts of demands.
+     *
+     * <p>In case of mismatch of supplies and demands the transportation problem is called opened, otherwise - closed.
+     * Opened problem is transformed into closed one by adding fictional demand(in case of supply amount
+     * being bigger than demands) or fictional supply amount(otherwise).
+     *
+     * @param costsPerUnit costs of moving one unit of some supply
+     * @param supplies amounts of supplies
+     * @param demands amounts of demands
+     */
     public MinimalElementTransportationSolver(double[][] costsPerUnit, double[] supplies, double[] demands) {
         double totalSupplies = stream(supplies).sum();
         double totalDemands = stream(demands).sum();
@@ -48,6 +67,10 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         }
     }
 
+    /**
+     * returns feasible solution of transportation problem using minimal element method
+     * @return feasible solution of transportation problem
+     */
     @Override
     public double[][] getInitialFeasibleSolution() {
         double[] innerDemands = demands.clone();
@@ -96,8 +119,7 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         return feasiblePlan;
     }
 
-    @Override
-    public double[][] calculatePotentials(double[][] solution) {
+    private double[][] calculatePotentials(double[][] solution) {
         int degeneracy = solutionDegeneracy(solution);
         if (degeneracy > 0) {
             addFictionalTransportation(solution, degeneracy);
@@ -155,6 +177,10 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         }
     }
 
+    /**
+     * returns optimal(minimized) solution of transportation method using potential method
+     * @return optimal(minimized) solution of transportation method
+     */
     @Override
     public double[][] getOptimalSolution() {
         double[][] solution = this.getInitialFeasibleSolution();
@@ -291,6 +317,11 @@ public class MinimalElementTransportationSolver implements TransportationProblem
         return minPoint;
     }
 
+    /**
+     * returns total cost of transportation based on given solution
+     * @param solution one of solutions of transportation problem
+     * @return total cost of transportation
+     */
     @Override
     public double getTotalCost(double[][] solution) {
         double result = 0;
